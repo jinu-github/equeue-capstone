@@ -68,10 +68,15 @@ h2 {
     font-size: 14px;
 }
 
+.login-form-group {
+    position: relative;
+}
+
 .login-form-group input,
 .login-form-group select {
     width: 100%;
-    padding: 12px 15px;
+    height: 48px;
+    padding: 12px 45px 12px 15px;
     border: 2px solid #e0e0e0;
     border-radius: 6px;
     font-size: 15px;
@@ -85,6 +90,37 @@ h2 {
     border-color: #667eea;
     background-color: white;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.toggle-password {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+    background: none;
+    border: none;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-size: 0;
+}
+
+.toggle-password svg {
+    width: 28px;
+    height: 28px;
+    stroke: #666;
+    stroke-width: 2;
+    fill: none;
+    transition: stroke 0.2s ease;
+}
+
+.login-form-group input:focus ~ .toggle-password svg {
+    stroke: #667eea;
 }
 
 /* Alerts */
