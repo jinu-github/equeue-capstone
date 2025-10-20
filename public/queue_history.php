@@ -225,24 +225,6 @@ $departments = $department_model->get_all();
         </div>
     </header>
     <div class="container">
-        <?php if ($department_id): ?>
-            <?php
-            // Get department name for display
-            $departments->data_seek(0); // Reset pointer
-            $selected_dept_name = '';
-            while ($dept = $departments->fetch_assoc()) {
-                if ($dept['id'] == $department_id) {
-                    $selected_dept_name = $dept['name'];
-                    break;
-                }
-            }
-            ?>
-            <div style="text-align: center; padding: 0.5rem 0; background: rgba(59, 130, 246, 0.1); border-radius: 8px; margin-bottom: 1rem; border: 1px solid rgba(59, 130, 246, 0.2);">
-                <h2 style="color: var(--primary); margin: 0; font-size: 1.2rem; font-weight: 500;">
-                    <?php echo htmlspecialchars($selected_dept_name); ?> Department
-                </h2>
-            </div>
-        <?php endif; ?>
         <main>
             <!-- Filters Section -->
             <div class="form-section">
