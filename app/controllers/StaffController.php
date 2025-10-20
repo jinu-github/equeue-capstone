@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Send email
-        $reset_link = "http://" . $_SERVER['HTTP_HOST'] . "/public/reset_password.php?token=" . $token;
+        $reset_link = "http://" . $_SERVER['HTTP_HOST'] . "/equeue/public/reset_password.php?token=" . $token;
         $subject = "Password Reset - eQueue System";
         $message = "Hello " . $user['name'] . ",\n\n";
         $message .= "You have requested to reset your password for the eQueue system.\n\n";
