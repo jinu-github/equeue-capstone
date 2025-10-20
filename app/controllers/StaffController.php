@@ -48,7 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $headers .= "X-Mailer: PHP/" . phpversion();
 
         $emailService = new EmailService();
-        if ($emailService->sendPasswordResetEmail($user['email'], $user['name'], $reset_link)) {
+        if (DEVELOPMENT_MODE) {
+            // In development mode, show the reset link directly instead of sending email
+            $staff->log_audit_action($user['id'], 'password_reset_requested', 'Password reset link generated (development mode)', $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'] ?? '');
+            header("Location: ../../public/forgot_password.php?message=Development mode: Reset link - " . urlencode($reset_link));
+        } elseif ($emailService->sendPasswordResetEmail($user['email'], $user['name'], $reset_link)) {
             $staff->log_audit_action($user['id'], 'password_reset_requested', 'Password reset email sent', $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'] ?? '');
             header("Location: ../../public/forgot_password.php?message=If your account exists, a password reset link has been sent to your email");
         } else {
