@@ -10,9 +10,9 @@ define('DEVELOPMENT_MODE', false);
 // Email Configuration - PHPMailer
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
-define('SMTP_USERNAME', 'justinvillanueva98@gmail.com'); // Replace with your Gmail
-define('SMTP_PASSWORD', 'pfyt gpki xzur cuot'); // Replace with Gmail app password
-define('SMTP_FROM_EMAIL', 'justinvillanueva98@gmail.com'); // Replace with your Gmail
+define('SMTP_USERNAME', getenv('SMTP_USERNAME') ?: 'justinvillanueva98@gmail.com'); // Use env var or fallback
+define('SMTP_PASSWORD', getenv('SMTP_PASSWORD') ?: 'pfyt gpki xzur cuot'); // Use env var or fallback
+define('SMTP_FROM_EMAIL', getenv('SMTP_FROM_EMAIL') ?: 'justinvillanueva98@gmail.com'); // Use env var or fallback
 define('SMTP_FROM_NAME', 'eQueue System');
 
 // SMS Configuration - iTexMo API
