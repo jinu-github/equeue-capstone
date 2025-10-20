@@ -750,7 +750,7 @@ if ($is_receptionist) {
 
                             var row = `
                                 <tr>
-                                    <td>${member.first_name} ${member.last_name}</td>
+                                    <td>${member.name}</td>
                                     <td>${member.username}</td>
                                     <td><span class="role-badge role-${member.role}">${member.role}</span></td>
                                     <td>${departmentName}</td>
