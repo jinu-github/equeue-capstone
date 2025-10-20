@@ -4,6 +4,9 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'eQueue');
 
+// Development mode for testing (set to false in production)
+define('DEVELOPMENT_MODE', true);
+
 // SMS Configuration - iTexMo API
 define('SMS_EMAIL', 'justinvillanueva.neust@gmail.com');
 define('SMS_PASSWORD', '@JWt@u38RZ2N4dN');
