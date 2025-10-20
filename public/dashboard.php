@@ -798,7 +798,7 @@ if ($is_receptionist) {
             if (confirm('Are you sure you want to delete this staff member? This action cannot be undone.')) {
                 $.ajax({
                     url: '../app/controllers/StaffController.php',
-                    type: 'GET',
+                    type: 'POST',
                     data: {
                         action: 'delete',
                         id: staffId
