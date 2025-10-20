@@ -1,37 +1,37 @@
-# Admin Capabilities Extension - TODO List
+# Password Reset Functionality Implementation - TODO List
 
 ## Database Schema Updates
-- [ ] Update staff table role enum to include 'admin'
-- [ ] Ensure admin_audit_log table exists with proper structure
+- [x] Add email column to staff table
 
 ## Staff Model Enhancements
-- [ ] Add get_all_staff() method for admin listing (receptionists and staff only)
-- [ ] Add update_staff() method for editing staff accounts
-- [ ] Add delete_staff() method for removing staff accounts
-- [ ] Add create_staff() method for admin user creation
+- [ ] Add email property to Staff class
+- [ ] Add methods for password reset token generation and validation
+- [ ] Add method to find staff by email
+- [ ] Add method to update password with token validation
 
 ## Staff Controller Updates
-- [ ] Add admin-only endpoints for user management (list, create, edit, delete)
-- [ ] Add role-based access control checks for admin endpoints
-- [ ] Ensure all admin actions are logged to audit table
+- [ ] Add forgot_password action (generate token, send email)
+- [ ] Add reset_password action (validate token, update password)
+- [ ] Add email sending functionality
 
-## Dashboard Modifications
-- [ ] Add admin-specific UI sections for user management only
-- [ ] Fix department warning for admin users (admins don't have departments)
-- [ ] Admin dashboard shows user management interface instead of queue management
+## Login Page Modifications
+- [ ] Add "Forgot Password?" link to login.php
 
-## Reports System Enhancement
-- [ ] Modify reports.php to show all departments for admin users
-- [ ] Update Report model with admin-level aggregation methods
-- [ ] Add overall queue statistics and department performance reports
-
-## Testing and Validation
-- [ ] Test admin user management features (CRUD operations for staff/receptionists)
-- [ ] Test admin report generation across all departments
-- [ ] Verify audit logging for all admin actions
-- [ ] Test role-based access control
+## New Pages Creation
+- [ ] Create public/forgot_password.php (form for username/email input)
+- [ ] Create public/reset_password.php (form for new password with token)
+- [ ] Create CSS styling for new pages
 
 ## Security Considerations
-- [ ] Ensure admin endpoints are protected from non-admin access
-- [ ] Validate all admin inputs and prevent SQL injection
-- [ ] Implement proper session management for admin actions
+- [ ] Implement secure token generation (random, time-limited)
+- [ ] Add token expiry (24 hours)
+- [ ] Prevent token reuse
+- [ ] Log password reset attempts
+
+## Testing and Validation
+- [ ] Test forgot password form submission
+- [ ] Test email sending functionality
+- [ ] Test reset password with valid token
+- [ ] Test reset password with expired/invalid token
+- [ ] Test password strength validation on reset
+- [ ] Verify audit logging for reset attempts
