@@ -25,11 +25,15 @@ $patient_model = new Patient($conn);
 // Check user role
 $user_role = $_SESSION['role'] ?? 'staff'; // Default to staff if not set
 $is_receptionist = ($user_role === 'receptionist');
+$is_admin = ($user_role === 'admin');
 
-// For receptionists, get all departments; for staff, get only their assigned department
+// For receptionists, get all departments; for staff, get only their assigned department; for admin, no departments needed
 if ($is_receptionist) {
     $departments = $department_model->get_all()->fetch_all(MYSQLI_ASSOC);
     $staff_department = null; // Receptionists don't have a fixed department
+} elseif ($is_admin) {
+    $departments = []; // Admin doesn't manage specific departments
+    $staff_department = null;
 } else {
     $staff_department = $department_model->get_by_id($_SESSION['department_id']);
     $departments = [$staff_department]; // Make it an array for compatibility
@@ -55,10 +59,12 @@ if ($is_receptionist) {
     <header>
         <h1><i class="fas fa-tachometer-alt"></i> eQueue - Dashboard</h1>
         <div class="header-nav">
-            <?php if (!$is_receptionist): ?>
+            <?php if (!$is_receptionist && !$is_admin): ?>
                 <a href="display.php" target="_blank"><i class="fas fa-tv"></i> Display Page</a>
                 <a href="sms.php"><i class="fas fa-sms"></i> Send SMS</a>
                 <a href="queue_history.php"><i class="fas fa-history"></i> Queue History</a>
+                <a href="reports.php"><i class="fas fa-chart-bar"></i> Reports</a>
+            <?php elseif ($is_admin): ?>
                 <a href="reports.php"><i class="fas fa-chart-bar"></i> Reports</a>
             <?php endif; ?>
             <a href="../app/controllers/StaffController.php?action=logout" onclick="return confirm('Are you sure you want to logout?')"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -226,8 +232,43 @@ if ($is_receptionist) {
 
             <?php $departments_copy = $departments; ?>
 
+            <!-- Admin User Management Section - Only show for admin -->
+            <?php if ($is_admin): ?>
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-users-cog"></i> User Management</h2>
+                    </div>
+
+                    <!-- Add New Staff Button -->
+                    <div class="admin-actions">
+                        <button id="add-staff-btn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add New Staff
+                        </button>
+                    </div>
+
+                    <!-- Staff List Table -->
+                    <div class="table-section">
+                        <table id="staff-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Last Login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staff-table-body">
+                                <!-- Staff data will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <!-- Patient Queues Section - Only show for staff -->
-            <?php if (!$is_receptionist): ?>
+            <?php if (!$is_receptionist && !$is_admin): ?>
                 <div class="queue-sections">
                     <div class="section-header">
                         <h2>Department Queues</h2>
@@ -689,6 +730,96 @@ if ($is_receptionist) {
                 $('#patient-form-modal').hide();
             }
         });
+
+        // Admin functionality - Load staff data
+        <?php if ($is_admin): ?>
+        function loadStaffData() {
+            $.ajax({
+                url: '../app/controllers/StaffController.php',
+                type: 'GET',
+                data: { action: 'get_all_staff' },
+                dataType: 'json',
+                success: function(staff) {
+                    var tbody = $('#staff-table-body');
+                    tbody.empty();
+
+                    if (staff && staff.length > 0) {
+                        $.each(staff, function(index, member) {
+                            var lastLogin = member.last_login ? new Date(member.last_login).toLocaleString() : 'Never';
+                            var departmentName = member.department_name || 'N/A';
+
+                            var row = `
+                                <tr>
+                                    <td>${member.first_name} ${member.last_name}</td>
+                                    <td>${member.username}</td>
+                                    <td><span class="role-badge role-${member.role}">${member.role}</span></td>
+                                    <td>${departmentName}</td>
+                                    <td>${lastLogin}</td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="btn btn-secondary edit-staff" data-id="${member.id}">Edit</button>
+                                            <button class="btn btn-danger delete-staff" data-id="${member.id}">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                            tbody.append(row);
+                        });
+                    } else {
+                        tbody.append('<tr><td colspan="6" class="text-center" style="color: #6b7280; padding: 2rem;">No staff members found</td></tr>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading staff data:', error);
+                    $('#staff-table-body').html('<tr><td colspan="6" class="text-center" style="color: #dc3545; padding: 2rem;">Error loading staff data</td></tr>');
+                }
+            });
+        }
+
+        // Load staff data on page load
+        loadStaffData();
+
+        // Handle add staff button
+        $('#add-staff-btn').on('click', function() {
+            // Redirect to staff registration page or show modal
+            window.location.href = 'register.php?type=staff';
+        });
+
+        // Handle edit staff button
+        $(document).on('click', '.edit-staff', function() {
+            var staffId = $(this).data('id');
+            window.location.href = 'edit_staff.php?id=' + staffId;
+        });
+
+        // Handle delete staff button
+        $(document).on('click', '.delete-staff', function() {
+            var staffId = $(this).data('id');
+
+            if (confirm('Are you sure you want to delete this staff member? This action cannot be undone.')) {
+                $.ajax({
+                    url: '../app/controllers/StaffController.php',
+                    type: 'GET',
+                    data: {
+                        action: 'delete',
+                        id: staffId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Staff member deleted successfully');
+                            loadStaffData(); // Reload the staff list
+                        } else {
+                            alert('Failed to delete staff member: ' + (response.message || 'Unknown error'));
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error deleting staff:', error);
+                        alert('Error deleting staff member. Please try again.');
+                    }
+                });
+            }
+        });
+        <?php endif; ?>
     });
     </script>
 <script>

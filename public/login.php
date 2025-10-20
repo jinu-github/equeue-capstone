@@ -28,12 +28,18 @@
                 </div>
             <?php endif; ?>
 
+            <?php if(isset($_GET['require_2fa'])): ?>
+                <div class="alert alert-info mb-3 full-width">
+                    Two-factor authentication required. Enter the 6-digit code from your authenticator app.
+                </div>
+            <?php endif; ?>
+
             <!-- START GRID -->
             <div class="form-grid">
 
                 <div class="login-form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required placeholder="Enter your username">
+                    <input type="text" id="username" name="username" required placeholder="Enter your username" value="<?php echo htmlspecialchars($_GET['username'] ?? ''); ?>">
                 </div>
 
                 <div class="login-form-group">
@@ -46,6 +52,13 @@
                         </svg>
                     </span>
                 </div>
+
+                <?php if(isset($_GET['require_2fa'])): ?>
+                <div class="login-form-group">
+                    <label for="twofa_code">2FA Code</label>
+                    <input type="text" id="twofa_code" name="twofa_code" required placeholder="Enter 6-digit code" pattern="[0-9]{6}" maxlength="6">
+                </div>
+                <?php endif; ?>
 
                 <!-- Make button span both columns -->
                 <button type="submit" class="login-btn full-width">Login</button>
