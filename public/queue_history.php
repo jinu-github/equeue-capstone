@@ -1,4 +1,4 @@
-r<?php
+<?php
 session_start();
 
 // Prevent browser from caching or showing this page from history
@@ -239,9 +239,6 @@ $departments = $department_model->get_all();
         <h1>Queue History</h1>
         <div class="header-nav">
             <a href="dashboard.php"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
-            <a href="../app/controllers/StaffController.php?action=logout">Logout</a>
-        </div>
-    </header>
     <div class="container">
         <main>
             <!-- Filters Section -->
