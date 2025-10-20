@@ -120,5 +120,14 @@ class Staff {
         }
         return $this->create($name, $username, $password, $department_id, $role);
     }
+
+    public function find_by_id($staff_id) {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ? LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $staff_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
 }
 ?>
