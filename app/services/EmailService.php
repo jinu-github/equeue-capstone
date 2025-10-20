@@ -19,6 +19,16 @@ class EmailService {
         $this->mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $this->mailer->Port = SMTP_PORT;
 
+        // Additional Gmail settings
+        $this->mailer->SMTPDebug = 0; // Set to 2 for debugging
+        $this->mailer->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
         // Default sender
         $this->mailer->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
     }
