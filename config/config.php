@@ -11,7 +11,7 @@ define('DEVELOPMENT_MODE', true);
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
 define('SMTP_USERNAME', 'justinvillanueva98@gmail.com'); // Replace with your Gmail
-define('SMTP_PASSWORD', 'lcps ldyl nqql bsf'); // Replace with Gmail app password
+define('SMTP_PASSWORD', 'pfyt gpki xzur cuot'); // Replace with Gmail app password
 define('SMTP_FROM_EMAIL', 'justinvillanueva98@gmail.com'); // Replace with your Gmail
 define('SMTP_FROM_NAME', 'eQueue System');
 
