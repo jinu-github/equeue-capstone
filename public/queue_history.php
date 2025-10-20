@@ -218,6 +218,24 @@ $departments = $department_model->get_all();
 </head>
 <body>
     <header>
+        <?php if ($department_id): ?>
+            <?php
+            // Get department name for display
+            $departments->data_seek(0); // Reset pointer
+            $selected_dept_name = '';
+            while ($dept = $departments->fetch_assoc()) {
+                if ($dept['id'] == $department_id) {
+                    $selected_dept_name = $dept['name'];
+                    break;
+                }
+            }
+            ?>
+            <div style="text-align: center; padding: 0.5rem 0; background: rgba(255, 255, 255, 0.1); border-radius: 8px; margin-bottom: 1rem;">
+                <h2 style="color: white; margin: 0; font-size: 1.2rem; font-weight: 500;">
+                    <?php echo htmlspecialchars($selected_dept_name); ?> Department
+                </h2>
+            </div>
+        <?php endif; ?>
         <h1>Queue History</h1>
         <div class="header-nav">
             <a href="dashboard.php"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
