@@ -2,6 +2,7 @@
 require_once '../../config/config.php';
 require_once '../models/Staff.php';
 require_once '../services/AdminSecurityService.php';
+require_once '../services/EmailService.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'];
