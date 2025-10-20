@@ -279,8 +279,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['admin_action'])) {
     }
 }
 
-// Handle GET delete action for AJAX calls from dashboard
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'delete') {
+// Handle POST delete action for AJAX calls from dashboard
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'delete') {
     session_start();
 
     // Check if user is admin
@@ -292,7 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['acti
     }
 
     $staff = new Staff($conn);
-    $staff_id = $_GET['id'];
+    $staff_id = intval($_POST['id']);
 
     if (empty($staff_id)) {
         header('Content-Type: application/json');
