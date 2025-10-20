@@ -218,6 +218,13 @@ $departments = $department_model->get_all();
 </head>
 <body>
     <header>
+        <h1>Queue History</h1>
+        <div class="header-nav">
+            <a href="dashboard.php"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+            <a href="../app/controllers/StaffController.php?action=logout">Logout</a>
+        </div>
+    </header>
+    <div class="container">
         <?php if ($department_id): ?>
             <?php
             // Get department name for display
@@ -230,16 +237,12 @@ $departments = $department_model->get_all();
                 }
             }
             ?>
-            <div style="text-align: center; padding: 0.5rem 0; background: rgba(255, 255, 255, 0.1); border-radius: 8px; margin-bottom: 1rem;">
-                <h2 style="color: white; margin: 0; font-size: 1.2rem; font-weight: 500;">
+            <div style="text-align: center; padding: 0.5rem 0; background: rgba(59, 130, 246, 0.1); border-radius: 8px; margin-bottom: 1rem; border: 1px solid rgba(59, 130, 246, 0.2);">
+                <h2 style="color: var(--primary); margin: 0; font-size: 1.2rem; font-weight: 500;">
                     <?php echo htmlspecialchars($selected_dept_name); ?> Department
                 </h2>
             </div>
         <?php endif; ?>
-        <h1>Queue History</h1>
-        <div class="header-nav">
-            <a href="dashboard.php"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
-    <div class="container">
         <main>
             <!-- Filters Section -->
             <div class="form-section">
