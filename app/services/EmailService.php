@@ -20,7 +20,10 @@ class EmailService {
         $this->mailer->Port = SMTP_PORT;
 
         // Additional Gmail settings
-        $this->mailer->SMTPDebug = 0; // Set to 2 for debugging
+        $this->mailer->SMTPDebug = 2; // Enable debugging
+        $this->mailer->Debugoutput = function($str, $level) {
+            error_log("PHPMailer Debug [{$level}]: {$str}");
+        };
         $this->mailer->SMTPOptions = array(
             'ssl' => array(
                 'verify_peer' => false,
