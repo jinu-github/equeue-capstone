@@ -5,7 +5,7 @@ define('DB_PASS', '');
 define('DB_NAME', 'eQueue');
 
 // Development mode for testing (set to false in production)
-define('DEVELOPMENT_MODE', false);
+define('DEVELOPMENT_MODE', true);
 
 // Email Configuration - PHPMailer
 define('SMTP_HOST', 'smtp.gmail.com');
