@@ -13,7 +13,7 @@
 <body>
     <div class="login-container">
         <form action="../app/controllers/StaffController.php" method="POST">
-            <h2>Staff Login</h2>
+            <h2>Login</h2>
             <input type="hidden" name="action" value="login">
 
             <?php if(isset($_GET['error'])): ?>
