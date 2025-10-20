@@ -130,5 +130,46 @@ class Staff {
         $result = $stmt->get_result();
         return $result->fetch_assoc();
     }
+
+    public function find_by_email($email) {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE email = ? LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    public function generate_reset_token($staff_id) {
+        $token = bin2hex(random_bytes(32));
+        $expiry = date('Y-m-d H:i:s', time() + (24 * 60 * 60)); // 24 hours
+
+        $query = "UPDATE " . $this->table_name . " SET reset_token = ?, reset_token_expiry = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("ssi", $token, $expiry, $staff_id);
+        return $stmt->execute() ? $token : false;
+    }
+
+    public function validate_reset_token($token) {
+        $query = "SELECT * FROM " . $this->table_name . " WHERE reset_token = ? AND reset_token_expiry > NOW() LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    public function update_password_with_token($token, $new_password) {
+        $staff = $this->validate_reset_token($token);
+        if (!$staff) {
+            return false;
+        }
+
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        $query = "UPDATE " . $this->table_name . " SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("si", $hashed_password, $staff['id']);
+        return $stmt->execute();
+    }
 }
 ?>
