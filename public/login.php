@@ -67,6 +67,10 @@
                     Don't have an account? <a href="register.php">Create one</a>
                 </p>
 
+                <p class="register-link full-width">
+                    <a href="forgot_password.php">Forgot Password?</a>
+                </p>
+
             </div>
             <!-- END GRID -->
         </form>
