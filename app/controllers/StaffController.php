@@ -6,6 +6,89 @@ require_once '../services/AdminSecurityService.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'];
 
+    if ($action == 'forgot_password') {
+        $username_or_email = trim($_POST['username_or_email']);
+
+        if (empty($username_or_email)) {
+            header("Location: ../../public/forgot_password.php?error=Please enter your username or email address");
+            exit();
+        }
+
+        $staff = new Staff($conn);
+        $user = $staff->find_by_username($username_or_email) ?: $staff->find_by_email($username_or_email);
+
+        if (!$user) {
+            // Don't reveal if user exists or not for security
+            header("Location: ../../public/forgot_password.php?message=If your account exists, a password reset link has been sent to your email");
+            exit();
+        }
+
+        // Generate reset token
+        $token = $staff->generate_reset_token($user['id']);
+        if (!$token) {
+            header("Location: ../../public/forgot_password.php?error=Failed to generate reset token. Please try again");
+            exit();
+        }
+
+        // Send email
+        $reset_link = "http://" . $_SERVER['HTTP_HOST'] . "/public/reset_password.php?token=" . $token;
+        $subject = "Password Reset - eQueue System";
+        $message = "Hello " . $user['name'] . ",\n\n";
+        $message .= "You have requested to reset your password for the eQueue system.\n\n";
+        $message .= "Click the following link to reset your password:\n";
+        $message .= $reset_link . "\n\n";
+        $message .= "This link will expire in 24 hours.\n\n";
+        $message .= "If you did not request this reset, please ignore this email.\n\n";
+        $message .= "Best regards,\n";
+        $message .= "eQueue System Administrator";
+
+        $headers = "From: noreply@equeue.local\r\n";
+        $headers .= "Reply-To: noreply@equeue.local\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion();
+
+        if (mail($user['email'], $subject, $message, $headers)) {
+            $staff->log_audit_action($user['id'], 'password_reset_requested', 'Password reset email sent', $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'] ?? '');
+            header("Location: ../../public/forgot_password.php?message=If your account exists, a password reset link has been sent to your email");
+        } else {
+            header("Location: ../../public/forgot_password.php?error=Failed to send reset email. Please try again");
+        }
+        exit();
+    }
+
+    if ($action == 'reset_password') {
+        $token = trim($_POST['token']);
+        $new_password = $_POST['new_password'];
+        $confirm_password = $_POST['confirm_password'];
+
+        if (empty($token) || empty($new_password) || empty($confirm_password)) {
+            header("Location: ../../public/reset_password.php?token=" . urlencode($token) . "&error=All fields are required");
+            exit();
+        }
+
+        if ($new_password !== $confirm_password) {
+            header("Location: ../../public/reset_password.php?token=" . urlencode($token) . "&error=Passwords do not match");
+            exit();
+        }
+
+        // Validate password strength
+        if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $new_password)) {
+            header("Location: ../../public/reset_password.php?token=" . urlencode($token) . "&error=Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character");
+            exit();
+        }
+
+        $staff = new Staff($conn);
+        if ($staff->update_password_with_token($token, $new_password)) {
+            $user = $staff->validate_reset_token($token); // Get user before token is cleared
+            if ($user) {
+                $staff->log_audit_action($user['id'], 'password_reset_success', 'Password reset successfully', $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'] ?? '');
+            }
+            header("Location: ../../public/login.php?message=Password reset successfully. You can now log in with your new password");
+        } else {
+            header("Location: ../../public/reset_password.php?token=" . urlencode($token) . "&error=Invalid or expired reset token");
+        }
+        exit();
+    }
+
     if ($action == 'register') {
         $name = $_POST['name'];
         $username = $_POST['username'];
