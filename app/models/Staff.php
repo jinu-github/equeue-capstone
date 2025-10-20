@@ -6,6 +6,7 @@ class Staff {
     public $id;
     public $name;
     public $username;
+    public $email;
     public $password;
     public $department_id;
     public $role;
